@@ -48,24 +48,42 @@ function rollDice(channelID, args) {
 	let diceType = "";
 	let results = [];
 	let sum = 0;
+	let error = false;
 
 	// init diceAmount and diceType
 	for(var i=0; i<args.length; i++) {
 		if(!readD) {
 			if(args[i] != "d") {
-				diceAmount += args[i];
+				// checking
+				if (typeof Number.parseInt(args[i]) == Number && Number.parseInt(args[i]) > 0) {
+					diceAmount += args[i];
+				} else {
+					error = true;
+				}
 			} else {
 				readD = true;
 				continue;
 			}
 		} else {
 			if(args[i] != "d") {
-				diceType += args[i];
+				if (typeof Number.parseInt(args[i]) == Number && Number.parseInt(args[i]) > 0) {
+					diceType += args[i];
+				} else {
+					error = true;
+				}
 			}
 		}
 	}
-	logger.info(diceAmount + ", " + diceType);
-
+	
+	if(error) {
+		bot.sendMessage({
+			to: channelID,
+			message: "Make sure the dice amount and dice type are both Numbers greater than 0"
+		});
+		return;
+	} else {
+		logger.info(diceAmount + ", " + diceType);
+	}
 	// make results
 	for(let i=0; i<diceAmount;i++) {
 		let random = Math.floor(Math.random()*diceType+1);
@@ -79,6 +97,7 @@ function rollDice(channelID, args) {
 			"\n[" + results + "]" +
 			"\nTotal: " + sum
 	});
+	return;
 }
 
 // function sendMessages(ID, messageArr, interval) {
