@@ -1,0 +1,11 @@
+{
+	"name": "diceBot",
+	"version": "1.0.0",
+	"description": "DiceBot to roll dice",
+	"main": "bot.js",
+	"author": "1LordPheonix1 and ChaoticClockwork",
+	"dependencies": {
+		"discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+		"winston": "^3.2.1"
+	}
+}
