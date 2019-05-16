@@ -42,29 +42,56 @@ bot.on("message", function(user, userID, channelID, message, event) {
 });
 
 function rollDice(channelID, args) {
-	// All strings
+	// All Output Variables
 	let diceAmount = "";
-	let readD = false;
 	let diceType = "";
 	let results = [];
 	let sum = 0;
+
+	// booleans
+	let readD = false;
+	let error = false;
+
+	// "d" index
+	let dIndex;
 
 	// init diceAmount and diceType
 	for(var i=0; i<args.length; i++) {
 		if(!readD) {
 			if(args[i] != "d") {
 				diceAmount += args[i];
+
+				// Error if first character is 0, Error if character is not a number
+				if((Math.abs(args[i]) <= 0 && i == 0) || isNaN(Number.parseInt(args[i]))) {
+					error = true;
+				}
 			} else {
 				readD = true;
+				dIndex = i;
 				continue;
 			}
 		} else {
 			if(args[i] != "d") {
 				diceType += args[i];
+				
+				// Error if first character is 0, Error if character is not a number
+				if((Math.abs(args[i]) <= 0 && i == dIndex+1) || isNaN(Number.parseInt(args[i]))) {
+					error = true;
+				}
 			}
 		}
 	}
+
+	// log information to console
 	logger.info(diceAmount + ", " + diceType);
+
+	if(error) {
+		bot.sendMessage({
+			to: channelID,
+			message: "Make sure the dice amount and dice type are both Numbers greater than 0"
+		});
+		return;
+	}
 
 	// make results
 	for(let i=0; i<diceAmount;i++) {
@@ -79,26 +106,5 @@ function rollDice(channelID, args) {
 			"\n[" + results + "]" +
 			"\nTotal: " + sum
 	});
+	return;
 }
-
-// function sendMessages(ID, messageArr, interval) {
-// 	var resArr = [], len = messageArr.length;
-// 	var callback = typeof(arguments[2]) === 'function' ?  arguments[2] :  arguments[3];
-// 	if (typeof(interval) !== 'number') interval = 1000;
-
-// 	function _sendMessages() {
-// 		setTimeout(function() {
-// 			if (messageArr[0]) {
-// 				bot.sendMessage({
-// 					to: ID,
-// 					message: messageArr.shift()
-// 				}, function(err, res) {
-// 					resArr.push(err || res);
-// 					if (resArr.length === len) if (typeof(callback) === 'function') callback(resArr);
-// 				});
-// 				_sendMessages();
-// 			}
-// 		}, interval);
-// 	}
-// 	_sendMessages();
-// }
